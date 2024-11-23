@@ -12,6 +12,10 @@ pygame.display.set_caption("Pong Game")
 # Define colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+YELLOW = (245, 194, 66)
+GREEN = (66, 245, 81)
+BLUE = (18, 172, 255)
+RED = (255, 18, 93)
 
 # Set up game variables
 ball_radius = 15
@@ -40,7 +44,8 @@ def draw_text(text, font, color, surface, x, y):
 def welcome_screen():
     win.fill(BLACK)
     draw_text("Welcome to Pong Game", font, WHITE, win, WIDTH // 2, HEIGHT // 2 - 50)
-    draw_text("Press any key to start", font, WHITE, win, WIDTH // 2, HEIGHT // 2 + 50)
+    draw_text("by Mr. Halip", font, WHITE, win, WIDTH // 2, HEIGHT // 2 - 25)
+    draw_text("Press any key to start", font, YELLOW, win, WIDTH // 2, HEIGHT // 2 + 50)
     pygame.display.flip()
 
     waiting = True
@@ -118,15 +123,15 @@ def game_loop():
         win.fill(BLACK)
 
         # Draw paddles and ball
-        pygame.draw.rect(win, WHITE, (0, paddle1_y, paddle_width, paddle_height))
+        pygame.draw.rect(win, BLUE, (0, paddle1_y, paddle_width, paddle_height))
         pygame.draw.rect(
-            win, WHITE, (WIDTH - paddle_width, paddle2_y, paddle_width, paddle_height)
+            win, RED, (WIDTH - paddle_width, paddle2_y, paddle_width, paddle_height)
         )
-        pygame.draw.circle(win, WHITE, (ball_x, ball_y), ball_radius)
+        pygame.draw.circle(win, YELLOW, (ball_x, ball_y), ball_radius)
 
         # Draw scores
-        draw_text(f"Player one: {score1}", font, WHITE, win, WIDTH // 4, 30)
-        draw_text(f"Player two: {score2}", font, WHITE, win, 3 * WIDTH // 4, 30)
+        draw_text(f"Player one: {score1}", font, BLUE, win, WIDTH // 4, 30)
+        draw_text(f"Player two: {score2}", font, RED, win, 3 * WIDTH // 4, 30)
 
         # Update the display
         pygame.display.flip()
