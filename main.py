@@ -24,72 +24,117 @@ paddle1_y, paddle2_y = (
 )
 paddle1_dy, paddle2_dy = 0, 0
 paddle_speed = 6
+score1, score2 = 0, 0
+font = pygame.font.Font(None, 36)
+
+
+# Function to display text
+def draw_text(text, font, color, surface, x, y):
+    textobj = font.render(text, True, color)
+    textrect = textobj.get_rect()
+    textrect.center = (x, y)
+    surface.blit(textobj, textrect)
+
+
+# Function to display welcome screen
+def welcome_screen():
+    win.fill(BLACK)
+    draw_text("Welcome to Pong Game", font, WHITE, win, WIDTH // 2, HEIGHT // 2 - 50)
+    draw_text("Press any key to start", font, WHITE, win, WIDTH // 2, HEIGHT // 2 + 50)
+    pygame.display.flip()
+
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.KEYDOWN:
+                waiting = False
+
 
 # Main game loop
-running = True
-clock = pygame.time.Clock()
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_w:
-                paddle1_dy = -paddle_speed
-            if event.key == pygame.K_s:
-                paddle1_dy = paddle_speed
-            if event.key == pygame.K_UP:
-                paddle2_dy = -paddle_speed
-            if event.key == pygame.K_DOWN:
-                paddle2_dy = paddle_speed
-        if event.type == pygame.KEYUP:
-            if event.key in (pygame.K_w, pygame.K_s):
-                paddle1_dy = 0
-            if event.key in (pygame.K_UP, pygame.K_DOWN):
-                paddle2_dy = 0
+def game_loop():
+    global ball_x, ball_y, ball_dx, ball_dy, paddle1_y, paddle2_y, paddle1_dy, paddle2_dy, score1, score2
+    running = True
+    clock = pygame.time.Clock()
 
-    # Update paddle positions
-    paddle1_y += paddle1_dy
-    paddle2_y += paddle2_dy
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_w:
+                    paddle1_dy = -paddle_speed
+                if event.key == pygame.K_s:
+                    paddle1_dy = paddle_speed
+                if event.key == pygame.K_UP:
+                    paddle2_dy = -paddle_speed
+                if event.key == pygame.K_DOWN:
+                    paddle2_dy = paddle_speed
+            if event.type == pygame.KEYUP:
+                if event.key in (pygame.K_w, pygame.K_s):
+                    paddle1_dy = 0
+                if event.key in (pygame.K_UP, pygame.K_DOWN):
+                    paddle2_dy = 0
 
-    # Ensure paddles stay on screen
-    paddle1_y = max(min(paddle1_y, HEIGHT - paddle_height), 0)
-    paddle2_y = max(min(paddle2_y, HEIGHT - paddle_height), 0)
+        # Update paddle positions
+        paddle1_y += paddle1_dy
+        paddle2_y += paddle2_dy
 
-    # Update ball position
-    ball_x += ball_dx
-    ball_y += ball_dy
+        # Ensure paddles stay on screen
+        paddle1_y = max(min(paddle1_y, HEIGHT - paddle_height), 0)
+        paddle2_y = max(min(paddle2_y, HEIGHT - paddle_height), 0)
 
-    # Ball collision with top and bottom walls
-    if ball_y - ball_radius <= 0 or ball_y + ball_radius >= HEIGHT:
-        ball_dy = -ball_dy
+        # Update ball position
+        ball_x += ball_dx
+        ball_y += ball_dy
 
-    # Ball collision with paddles
-    if (
-        ball_x - ball_radius <= paddle_width
-        and paddle1_y <= ball_y <= paddle1_y + paddle_height
-    ) or (
-        ball_x + ball_radius >= WIDTH - paddle_width
-        and paddle2_y <= ball_y <= paddle2_y + paddle_height
-    ):
-        ball_dx = -ball_dx
+        # Ball collision with top and bottom walls
+        if ball_y - ball_radius <= 0 or ball_y + ball_radius >= HEIGHT:
+            ball_dy = -ball_dy
 
-    # Ball goes out of bounds
-    if ball_x < 0 or ball_x > WIDTH:
-        ball_x, ball_y = WIDTH // 2, HEIGHT // 2
-        ball_dx, ball_dy = random.choice([-4, 4]), random.choice([-4, 4])
+        # Ball collision with paddles
+        if (
+            ball_x - ball_radius <= paddle_width
+            and paddle1_y <= ball_y <= paddle1_y + paddle_height
+        ) or (
+            ball_x + ball_radius >= WIDTH - paddle_width
+            and paddle2_y <= ball_y <= paddle2_y + paddle_height
+        ):
+            ball_dx = -ball_dx
 
-    # Clear the screen
-    win.fill(BLACK)
+        # Ball goes out of bounds
+        if ball_x < 0:
+            score2 += 1
+            ball_x, ball_y = WIDTH // 2, HEIGHT // 2
+            ball_dx, ball_dy = random.choice([-4, 4]), random.choice([-4, 4])
+        if ball_x > WIDTH:
+            score1 += 1
+            ball_x, ball_y = WIDTH // 2, HEIGHT // 2
+            ball_dx, ball_dy = random.choice([-4, 4]), random.choice([-4, 4])
 
-    # Draw paddles and ball
-    pygame.draw.rect(win, WHITE, (0, paddle1_y, paddle_width, paddle_height))
-    pygame.draw.rect(
-        win, WHITE, (WIDTH - paddle_width, paddle2_y, paddle_width, paddle_height)
-    )
-    pygame.draw.circle(win, WHITE, (ball_x, ball_y), ball_radius)
+        # Clear the screen
+        win.fill(BLACK)
 
-    # Update the display
-    pygame.display.flip()
-    clock.tick(60)
+        # Draw paddles and ball
+        pygame.draw.rect(win, WHITE, (0, paddle1_y, paddle_width, paddle_height))
+        pygame.draw.rect(
+            win, WHITE, (WIDTH - paddle_width, paddle2_y, paddle_width, paddle_height)
+        )
+        pygame.draw.circle(win, WHITE, (ball_x, ball_y), ball_radius)
 
-pygame.quit()
+        # Draw scores
+        draw_text(f"Player one: {score1}", font, WHITE, win, WIDTH // 4, 30)
+        draw_text(f"Player two: {score2}", font, WHITE, win, 3 * WIDTH // 4, 30)
+
+        # Update the display
+        pygame.display.flip()
+        clock.tick(60)
+
+    pygame.quit()
+
+
+# Run the game
+welcome_screen()
+game_loop()
