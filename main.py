@@ -4,6 +4,13 @@ import random
 # Initialize Pygame
 pygame.init()
 
+# Initialize mixer
+pygame.mixer.init()
+
+# Load music file
+pygame.mixer.music.load("music/space-120280.mp3")
+pygame.mixer.music.play(-1)  # Play the music in loop
+
 # Set up display
 WIDTH, HEIGHT = 800, 600
 win = pygame.display.set_mode((WIDTH, HEIGHT))
