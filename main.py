@@ -13,7 +13,7 @@ pygame.mixer.music.play(-1)  # Play the music in loop
 
 # Set up display
 WIDTH, HEIGHT = 800, 600
-win = pygame.display.set_mode((WIDTH, HEIGHT))
+window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Pong Game")
 
 # Define colors
@@ -49,10 +49,12 @@ def draw_text(text, font, color, surface, x, y):
 
 # Function to display welcome screen
 def welcome_screen():
-    win.fill(BLACK)
-    draw_text("Welcome to Pong Game", font, WHITE, win, WIDTH // 2, HEIGHT // 2 - 50)
-    draw_text("by Mr. Halip", font, WHITE, win, WIDTH // 2, HEIGHT // 2 - 25)
-    draw_text("Press any key to start", font, YELLOW, win, WIDTH // 2, HEIGHT // 2 + 50)
+    window.fill(BLACK)
+    draw_text("Welcome to Pong Game", font, WHITE, window, WIDTH // 2, HEIGHT // 2 - 50)
+    draw_text("by Mr. Halip", font, WHITE, window, WIDTH // 2, HEIGHT // 2 - 25)
+    draw_text(
+        "Press any key to start", font, YELLOW, window, WIDTH // 2, HEIGHT // 2 + 50
+    )
     pygame.display.flip()
 
     waiting = True
@@ -127,18 +129,18 @@ def game_loop():
             ball_dx, ball_dy = random.choice([-4, 4]), random.choice([-4, 4])
 
         # Clear the screen
-        win.fill(BLACK)
+        window.fill(BLACK)
 
         # Draw paddles and ball
-        pygame.draw.rect(win, BLUE, (0, paddle1_y, paddle_width, paddle_height))
+        pygame.draw.rect(window, BLUE, (0, paddle1_y, paddle_width, paddle_height))
         pygame.draw.rect(
-            win, RED, (WIDTH - paddle_width, paddle2_y, paddle_width, paddle_height)
+            window, RED, (WIDTH - paddle_width, paddle2_y, paddle_width, paddle_height)
         )
-        pygame.draw.circle(win, YELLOW, (ball_x, ball_y), ball_radius)
+        pygame.draw.circle(window, YELLOW, (ball_x, ball_y), ball_radius)
 
         # Draw scores
-        draw_text(f"Player one: {score1}", font, BLUE, win, WIDTH // 4, 30)
-        draw_text(f"Player two: {score2}", font, RED, win, 3 * WIDTH // 4, 30)
+        draw_text(f"Player one: {score1}", font, BLUE, window, WIDTH // 4, 30)
+        draw_text(f"Player two: {score2}", font, RED, window, 3 * WIDTH // 4, 30)
 
         # Update the display
         pygame.display.flip()
