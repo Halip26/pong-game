@@ -73,7 +73,7 @@ def welcome_screen():
     window.blit(overlay, (0, 0))
 
     draw_text("Welcome to Pong Game", 60, WHITE, window, WIDTH // 2, HEIGHT // 2 - 50)
-    draw_text("by Raka", 36, GREEN, window, WIDTH // 2, HEIGHT // 2 - 10)
+    draw_text("by Halip26", 36, GREEN, window, WIDTH // 2, HEIGHT // 2 - 10)
     draw_text(
         "Press any key to start", 36, YELLOW, window, WIDTH // 2, HEIGHT // 2 + 50
     )

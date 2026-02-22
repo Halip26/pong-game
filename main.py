@@ -226,8 +226,8 @@ def game_loop():
     global ball_x, ball_y, ball_dx, ball_dy, paddle1_y, paddle2_y, paddle1_dy, paddle2_dy, player1_score, player2_score
     running = True
     clock = pygame.time.Clock()
-    countdown_time = 20
-
+    countdown_time = 60
+    
     while running:
         current_time = pygame.time.get_ticks()  # Current time
         elapsed_time = (current_time - start_time) // 1000  # Elapsed time in seconds
@@ -314,7 +314,7 @@ def game_loop():
         clock.tick(60)
 
         # Check for the game over or tie
-        if elapsed_time >= 20:  # 20 seconds time limit
+        if elapsed_time >= 60:  # 60 seconds time limit
             BG_SOUND.stop()
             if player1_score > player2_score:
                 playerone_wins()
