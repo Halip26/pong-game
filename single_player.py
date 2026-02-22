@@ -93,29 +93,22 @@ def welcome_screen():
                 game_loop()
 
 
-# Function to display player's score
 def player_wins():
-
-    # Set the background of win screen
+    # set the bg of win screen
     window.blit(SET_BG_WIN, (0, 0))
 
-    # Add semi-transparent overlay to make text more readable
+    # add semi-transparant overlay to make text more readable
     overlay = pygame.Surface((WIDTH, HEIGHT))
     overlay.fill(BLACK)
-    overlay.set_alpha(100)  # 128 is semi-transparent
+    overlay.set_alpha(100)  # 128 is semi-transparant
     window.blit(overlay, (0, 0))
 
     draw_text("Game Over", 72, RED, window, WIDTH // 2, HEIGHT // 2 - 70)
     draw_text(f"Final Score: {score}", 45, BLUE, window, WIDTH // 2, HEIGHT // 2 - 5)
 
-    draw_text("Press Esc key to exit", 30, RED, window, WIDTH // 2, HEIGHT // 2 + 60)
+    draw_text("Press Esc ket to exit", 30, RED, window, WIDTH // 2, HEIGHT // 2 + 60)
     draw_text(
-        "Press Space key to play again",
-        30,
-        GREEN,
-        window,
-        WIDTH // 2,
-        HEIGHT // 2 + 95,
+        "Press Space key to play again", 30, GREEN, window, WIDTH // 2, HEIGHT // 2 + 95
     )
     pygame.display.flip()
 
@@ -138,6 +131,7 @@ def player_wins():
 # Function to reset the game
 def reset_game():
     global ball_x, ball_y, ball_dx, ball_dy, paddle_x, score
+
     ball_x, ball_y = WIDTH // 2, HEIGHT // 2
     ball_dx, ball_dy = random.choice([-4, 4]), random.choice([-4, 4])
     ball_dx, ball_dy = random.choice([-5, 5]), -5
@@ -152,7 +146,11 @@ def game_loop():
     running = True
     clock = pygame.time.Clock()
 
+    # play bg sound
+    BG_SOUND.play()
+
     while running:
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -214,7 +212,7 @@ def game_loop():
         clock.tick(60)
 
         # Check for the player's score
-        if ball_y > HEIGHT:
+        if ball_y > HEIGHT or score >= 2:
             BG_SOUND.stop()
             player_wins()
             running = False
