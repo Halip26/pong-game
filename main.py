@@ -225,9 +225,11 @@ def reset_game():
 def game_loop():
     global ball_x, ball_y, ball_dx, ball_dy, paddle1_y, paddle2_y, paddle1_dy, paddle2_dy, player1_score, player2_score
     running = True
+    paused = False
     clock = pygame.time.Clock()
     countdown_time = 60
-    
+    pause_start_time = 0
+
     while running:
         current_time = pygame.time.get_ticks()  # Current time
         elapsed_time = (current_time - start_time) // 1000  # Elapsed time in seconds
@@ -236,58 +238,70 @@ def game_loop():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w:
-                    paddle1_dy = -paddle_speed
-                if event.key == pygame.K_s:
-                    paddle1_dy = paddle_speed
-                if event.key == pygame.K_UP:
-                    paddle2_dy = -paddle_speed
-                if event.key == pygame.K_DOWN:
-                    paddle2_dy = paddle_speed
+                if event.key in (pygame.K_p, pygame.K_SPACE):
+                    paused = not paused
+                    if paused:
+                        pause_start_time = pygame.time.get_ticks()
+                    else:
+                        # Adjust start_time to account for pause duration
+                        pause_duration = pygame.time.get_ticks() - pause_start_time
+                        start_time += pause_duration
+                elif not paused:
+                    if event.key == pygame.K_w:
+                        paddle1_dy = -paddle_speed
+                    if event.key == pygame.K_s:
+                        paddle1_dy = paddle_speed
+                    if event.key == pygame.K_UP:
+                        paddle2_dy = -paddle_speed
+                    if event.key == pygame.K_DOWN:
+                        paddle2_dy = paddle_speed
             if event.type == pygame.KEYUP:
-                if event.key in (pygame.K_w, pygame.K_s):
-                    paddle1_dy = 0
-                if event.key in (pygame.K_UP, pygame.K_DOWN):
-                    paddle2_dy = 0
+                if not paused:
+                    if event.key in (pygame.K_w, pygame.K_s):
+                        paddle1_dy = 0
+                    if event.key in (pygame.K_UP, pygame.K_DOWN):
+                        paddle2_dy = 0
 
-        # Update paddle positions
-        paddle1_y += paddle1_dy
-        paddle2_y += paddle2_dy
+        # Skip game logic if paused
+        if not paused:
+            # Update paddle positions
+            paddle1_y += paddle1_dy
+            paddle2_y += paddle2_dy
 
-        # Ensure paddles stay on screen
-        paddle1_y = max(min(paddle1_y, HEIGHT - paddle_height), 0)
-        paddle2_y = max(min(paddle2_y, HEIGHT - paddle_height), 0)
+            # Ensure paddles stay on screen
+            paddle1_y = max(min(paddle1_y, HEIGHT - paddle_height), 0)
+            paddle2_y = max(min(paddle2_y, HEIGHT - paddle_height), 0)
 
-        # Update ball position
-        ball_x += ball_dx
-        ball_y += ball_dy
+            # Update ball position
+            ball_x += ball_dx
+            ball_y += ball_dy
 
-        # Ball collision with top and bottom walls
-        if ball_y - ball_radius <= 0 or ball_y + ball_radius >= HEIGHT:
-            ball_dy = -ball_dy
+            # Ball collision with top and bottom walls
+            if ball_y - ball_radius <= 0 or ball_y + ball_radius >= HEIGHT:
+                ball_dy = -ball_dy
 
-        # Ball collision with paddles
-        if (
-            ball_x - ball_radius <= paddle_width
-            and paddle1_y <= ball_y <= paddle1_y + paddle_height
-        ) or (
-            ball_x + ball_radius >= WIDTH - paddle_width
-            and paddle2_y <= ball_y <= paddle2_y + paddle_height
-        ):
-            ball_dx = -ball_dx
+            # Ball collision with paddles
+            if (
+                ball_x - ball_radius <= paddle_width
+                and paddle1_y <= ball_y <= paddle1_y + paddle_height
+            ) or (
+                ball_x + ball_radius >= WIDTH - paddle_width
+                and paddle2_y <= ball_y <= paddle2_y + paddle_height
+            ):
+                ball_dx = -ball_dx
 
-        # Ball goes out of bounds
-        if ball_x < 0:
-            player2_score += 1
-            ball_x, ball_y = WIDTH // 2, HEIGHT // 2
-            ball_dx, ball_dy = random.choice([-4, 4]), random.choice([-4, 4])
-        if ball_x > WIDTH:
-            player1_score += 1
-            ball_x, ball_y = WIDTH // 2, HEIGHT // 2
-            ball_dx, ball_dy = random.choice([-4, 4]), random.choice([-4, 4])
+            # Ball goes out of bounds
+            if ball_x < 0:
+                player2_score += 1
+                ball_x, ball_y = WIDTH // 2, HEIGHT // 2
+                ball_dx, ball_dy = random.choice([-4, 4]), random.choice([-4, 4])
+            if ball_x > WIDTH:
+                player1_score += 1
+                ball_x, ball_y = WIDTH // 2, HEIGHT // 2
+                ball_dx, ball_dy = random.choice([-4, 4]), random.choice([-4, 4])
 
-        # update the countdown timer
-        countdown_time -= 1 / 60
+            # update the countdown timer
+            countdown_time -= 1 / 60
 
         # Clear the screen
         window.fill(BLACK)
@@ -308,6 +322,22 @@ def game_loop():
         minutes = int(countdown_time) // 60
         seconds = int(countdown_time) % 60
         draw_text(f"{minutes:02}:{seconds:02}", 36, WHITE, window, WIDTH // 2, 30)
+
+        # Draw pause message if paused
+        if paused:
+            overlay = pygame.Surface((WIDTH, HEIGHT))
+            overlay.fill(BLACK)
+            overlay.set_alpha(150)
+            window.blit(overlay, (0, 0))
+            draw_text("PAUSED", 72, YELLOW, window, WIDTH // 2, HEIGHT // 2 - 30)
+            draw_text(
+                "Press P or Space to resume",
+                28,
+                WHITE,
+                window,
+                WIDTH // 2,
+                HEIGHT // 2 + 40,
+            )
 
         # Update the display
         pygame.display.flip()
