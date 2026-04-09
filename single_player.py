@@ -48,6 +48,7 @@ paddle_x = WIDTH // 2 - paddle_width // 2
 paddle_y = HEIGHT - 50
 paddle_speed = 6
 score = 0
+lives = 3
 font = pygame.font.Font(None, 36)
 start_time = pygame.time.get_ticks()  # Start
 
@@ -103,10 +104,46 @@ def player_wins():
     overlay.set_alpha(100)  # 128 is semi-transparant
     window.blit(overlay, (0, 0))
 
-    draw_text("Player Wins!", 72, GREEN, window, WIDTH // 2, HEIGHT // 2 - 70)
+    draw_text("You Win!", 72, BLUE, window, WIDTH // 2, HEIGHT // 2 - 70)
     draw_text(f"Final Score: {score}", 45, BLUE, window, WIDTH // 2, HEIGHT // 2 - 5)
 
-    draw_text("Press Esc key to exit", 30, RED, window, WIDTH // 2, HEIGHT // 2 + 60)
+    draw_text("Press Esc ket to exit", 30, RED, window, WIDTH // 2, HEIGHT // 2 + 60)
+    draw_text(
+        "Press Space key to play again", 30, GREEN, window, WIDTH // 2, HEIGHT // 2 + 95
+    )
+    pygame.display.flip()
+
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    waiting = False
+                # set to play again
+                elif event.key == pygame.K_SPACE:
+                    waiting = False
+                    reset_game()
+                    welcome_screen()
+
+
+def game_over():
+    # set the bg of win screen
+    window.blit(SET_BG_WIN, (0, 0))
+
+    # add semi-transparant overlay to make text more readable
+    overlay = pygame.Surface((WIDTH, HEIGHT))
+    overlay.fill(BLACK)
+    overlay.set_alpha(100)  # 128 is semi-transparant
+    window.blit(overlay, (0, 0))
+
+    draw_text("GAME OVER", 85, RED, window, WIDTH // 2, HEIGHT // 2 - 130)
+    draw_text("You Lost!", 72, BLUE, window, WIDTH // 2, HEIGHT // 2 - 70)
+    draw_text(f"Final Score: {score}", 45, BLUE, window, WIDTH // 2, HEIGHT // 2 - 5)
+
+    draw_text("Press Esc ket to exit", 30, RED, window, WIDTH // 2, HEIGHT // 2 + 60)
     draw_text(
         "Press Space key to play again", 30, GREEN, window, WIDTH // 2, HEIGHT // 2 + 95
     )
@@ -130,19 +167,22 @@ def player_wins():
 
 # Function to reset the game
 def reset_game():
-    global ball_x, ball_y, ball_dx, ball_dy, paddle_x, score
+    global ball_x, ball_y, ball_dx, ball_dy, paddle_x, score, lives, start_time
 
     ball_x, ball_y = WIDTH // 2, HEIGHT // 2
     ball_dx, ball_dy = random.choice([-4, 4]), random.choice([-4, 4])
     ball_dx, ball_dy = random.choice([-5, 5]), -5
     paddle_x = WIDTH // 2 - paddle_width // 2
     score = 0
-    BG_SOUND.play()  # play the music
+    lives = 3
+    start_time = pygame.time.get_ticks()  # Reset timer
+    if BG_SOUND:
+        BG_SOUND.play()  # play the music
 
 
 # Main game loop
 def game_loop():
-    global ball_x, ball_y, ball_dx, ball_dy, paddle_x, score
+    global ball_x, ball_y, ball_dx, ball_dy, paddle_x, score, lives
     running = True
     clock = pygame.time.Clock()
 
@@ -186,12 +226,20 @@ def game_loop():
             ball_dx *= 1.02
             ball_dy *= 1.02
 
-        # Ball goes out of bounds
+        # Ball goes out of bounds - lose a life
         if ball_y > HEIGHT:
-            if BG_SOUND:
-                BG_SOUND.stop()
-            player_wins()
-            running = False
+            lives -= 1
+            if lives > 0:
+                # Reset ball for next life
+                ball_x, ball_y = WIDTH // 2, HEIGHT // 2
+                ball_dx, ball_dy = random.choice([-5, 5]), -5
+                paddle_x = WIDTH // 2 - paddle_width // 2
+            else:
+                # Game over - no lives left
+                if BG_SOUND:
+                    BG_SOUND.stop()
+                game_over()
+                running = False
 
         # Clear the screen
         window.fill(BLACK)
@@ -204,17 +252,33 @@ def game_loop():
         # The pong ball
         pygame.draw.circle(window, YELLOW, (ball_x, ball_y), ball_radius)
 
-        # Draw scores
+        # Calculate elapsed time
+        elapsed_time = (
+            pygame.time.get_ticks() - start_time
+        ) // 1000  # Convert to seconds
+        remaining_time = max(0, 60 - elapsed_time)  # 60 seconds total
+
+        # Draw scores, lives, and timer
         draw_text(f"Score: {score}", 36, WHITE, window, WIDTH // 2, 60)
+        draw_text(f"Lives: {lives}", 36, GREEN, window, 100, 100)
+        draw_text(f"Time: {remaining_time}s", 36, RED, window, WIDTH - 100, 100)
 
         # Update the display
         pygame.display.flip()
         clock.tick(60)
 
-        # Check for the player's score
-        if ball_y > HEIGHT or score >= 2:
-            BG_SOUND.stop()
+        # Check if score reaches winning condition
+        if score >= 3:
+            if BG_SOUND:
+                BG_SOUND.stop()
             player_wins()
+            running = False
+
+        # Game over function called when the time is over
+        if remaining_time <= 0:
+            if BG_SOUND:
+                BG_SOUND.stop()
+            game_over()
             running = False
 
 
