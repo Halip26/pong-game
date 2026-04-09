@@ -1,39 +1,74 @@
 # Pong Game
 
-Welcome to the Pong Game! This is a simple implementation of the classic Pong game using Pygame. Enjoy playing against a friend and see who can score the most points before the time runs out!
+Welcome to the Pong Game! This is a classic Pong game implementation using Pygame with both **Single-Player** and **Multiplayer** modes. Challenge yourself with AI or compete against a friend!
 
-## Install
+## Installation
 
 ```bash
-pip install -r .\requirements.txt
+pip install -r requirements.txt
 ```
+
+## Game Modes
+
+### 🎮 Single-Player Mode (`single_player.py`)
+
+Play against an AI paddle with a lives system. Reach a score of 3 to win!
+
+**Features:**
+
+- **Lives System**: Start with 3 lives. Lose one when the ball goes out of bounds.
+- **Score System**: Reach 3 points to win the game.
+- **Time Limit**: Complete your objective within 10 seconds.
+- **Difficulty**: Ball speed increases as you hit it.
+- **HUD Display**: Real-time display of Score, Lives, and Time remaining.
+
+**Controls:**
+
+- `LEFT ARROW` or `A` key: Move paddle left
+- `RIGHT ARROW` or `D` key: Move paddle right
+
+**Win/Lose Conditions:**
+
+- **Win**: Reach a score of 3 before time runs out
+- **Lose**: Lose all 3 lives OR time runs out
+
+### 👥 Multiplayer Mode (`main.py`)
+
+Play with another player in a classic two-player Pong format.
+
+**Controls:**
+
+- **Player 1**: `W` to move up, `S` to move down
+- **Player 2**: `UP ARROW` to move up, `DOWN ARROW` to move down
 
 ## Features
 
-- **Music**: Background music that loops during the game.
-- **Score Tracking**: Keep track of the scores for both players.
-- **Game Timer**: The game ends after 2 minutes, and the winner is determined.
-- **Tie Condition**: If the scores are tied when the time runs out, a "TIE" message is displayed.
-- **Welcome Screen**: A welcome screen that prompts the player to start the game.
-
-## Controls
-
-- **Player 1**: Use `W` to move up and `S` to move down.
-- **Player 2**: Use the `Up` arrow key to move up and the `Down` arrow key to move down.
+- **Background Music**: Ambient space music during gameplay
+- **Score Tracking**: Real-time score display for all game modes
+- **Game Timer**: Time-based gameplay to add urgency
+- **Welcome Screen**: Intuitive start screen
+- **Game Over Screens**: Clear feedback for wins, losses, and ties
+- **Smooth Gameplay**: 60 FPS game loop for fluid motion
 
 ## How to Run
 
-1. **Install Pygame**: Make sure you have Python and Pygame installed. You can install Pygame using the following command:
+### Option 1: Single-Player Mode
 
-    ```sh
-    pip install pygame
-    ```
+```bash
+python single_player.py
+```
 
-2. **Run the Game**: Save the game code to a file, e.g., `pong_game.py`, and run it using Python:
+### Option 2: Multiplayer Mode
 
-    ```sh
-    python pong_game.py
-    ```
+```bash
+python main.py
+```
+
+### Or use the main entry point:
+
+```bash
+python main.py  # (if configured as default launcher)
+```
 
 ## Code Overview
 
@@ -54,6 +89,15 @@ Here is a brief overview of the main parts of the game code:
 
 This game was created using the Pygame library. Special thanks to the Pygame community for their excellent documentation and tutorials.
 
+Enjoy the game!
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+Developed by [Halip26](https://halip26.github.io/)
 Enjoy the game!
 
 ## License
