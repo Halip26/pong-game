@@ -103,10 +103,10 @@ def player_wins():
     overlay.set_alpha(100)  # 128 is semi-transparant
     window.blit(overlay, (0, 0))
 
-    draw_text("Game Over", 72, RED, window, WIDTH // 2, HEIGHT // 2 - 70)
+    draw_text("Player Wins!", 72, GREEN, window, WIDTH // 2, HEIGHT // 2 - 70)
     draw_text(f"Final Score: {score}", 45, BLUE, window, WIDTH // 2, HEIGHT // 2 - 5)
 
-    draw_text("Press Esc ket to exit", 30, RED, window, WIDTH // 2, HEIGHT // 2 + 60)
+    draw_text("Press Esc key to exit", 30, RED, window, WIDTH // 2, HEIGHT // 2 + 60)
     draw_text(
         "Press Space key to play again", 30, GREEN, window, WIDTH // 2, HEIGHT // 2 + 95
     )
